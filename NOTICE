@@ -1,0 +1,28 @@
+Template attribution
+======================
+
+This repository is a starter template published by the copyright holder named in
+`LICENSE`.
+
+Upstream template (canonical source)
+----------------------------------
+Replace this URL with your public repository once it is published:
+
+    https://github.com/YOUR_USERNAME/wokwi-esp32-idf
+
+Expectation for people who redistribute this as a template
+----------------------------------------------------------
+If you fork or copy this project and offer it to others as a generic starter or
+“template” (under any name), you must:
+
+1. Keep the `LICENSE` file as required by the MIT License (including the
+   copyright line), and
+2. Keep this `NOTICE` file (or merge its content into your README) so that users
+   can find the **upstream template** above.
+
+That way people who want the maintained starter can fall back to the original
+repository instead of a renamed copy with no link back.
+
+Private use and normal application projects (not republished as a public
+template) are fine; the point is honest credit and a discoverable upstream when
+this work is re-offered wholesale as someone else’s template.

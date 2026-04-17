@@ -1,0 +1,30 @@
+# Reusable starter for C on ESP32 with ESP-IDF and the Wokwi simulator.
+# Ignore generated and machine-local files; keep sources, sdkconfig, and Wokwi metadata in git.
+
+# ESP-IDF build output
+/build/
+
+# menuconfig backup (keep sdkconfig tracked for reproducible Wokwi / CI builds)
+/sdkconfig.old
+
+# ESP-IDF Component Registry / manager downloads
+/managed_components/
+
+# clangd (compile_commands.json lives under build/ after idf.py build)
+/.cache/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Python (tools, idf.py venvs)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Optional: uncomment if you keep a local env file
+# .env

@@ -1,0 +1,17 @@
+{
+  "idf.currentSetup": "/home/sief_x/.espressif/v6.0/esp-idf",
+  "idf.openOcdConfigs": [
+    "interface/ftdi/esp32_devkitj_v1.cfg",
+    "target/esp32.cfg"
+  ],
+  "idf.customExtraVars": {
+    "IDF_TARGET": "esp32"
+  },
+  "clangd.path": "/home/sief_x/.espressif/tools/esp-clang/esp-20.1.1_20250829/esp-clang/bin/clangd",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=**",
+    "--compile-commands-dir=/home/sief_x/Projects/deci-course-projects/wokwi-esp32-idf/build"
+  ],
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json"
+}

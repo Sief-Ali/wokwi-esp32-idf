@@ -1,0 +1,13 @@
+# Wokwi / VS Code extension: https://docs.wokwi.com/vscode/project-config
+# Run `idf.py build` first so `build/flasher_args.json` and the .elf exist.
+[wokwi]
+version = 1
+firmware = "build/flasher_args.json"
+elf = "build/wokwi-esp32-idf.elf"
+gdbServerPort=3333
+rfc2217ServerPort = 4000
+
+# Forward http://localhost:8180 to port 80 on the simulated ESP32:
+[[net.forward]]
+from = "localhost:8180"
+to = "target:80"

@@ -1,0 +1,59 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Wokwi ESP32 Debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/wokwi-esp32-idf.elf",
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
+      "miDebuggerServerAddress": "localhost:4000",
+
+      "setupCommands": [
+        {
+          "text": "set architecture xtensa",
+          "description": "Force correct architecture"
+        },
+        {
+          "text": "target remote localhost:4000",
+          "description": "Connect to Wokwi GDB server"
+        },
+        {
+          "text": "monitor reset halt",
+          "description": "Reset and halt target"
+        },
+        {
+          "text": "flushregs",
+          "description": "Refresh registers"
+        }
+      ]
+    }
+  ]
+}
+// both don't work
+
+// 1
+// {
+//   "version": "0.2.0",
+//   "configurations": [
+//     {
+//       "name": "Wokwi ESP32 Debug",
+//       "type": "cppdbg",
+//       "request": "launch",
+//       "program": "${workspaceFolder}/build/wokwi-esp32-idf.elf",
+//       "cwd": "${workspaceFolder}",
+//       "MIMode": "gdb",
+//       "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
+//       "miDebuggerServerAddress": "localhost:4000",
+//       "setupCommands": [
+//         {
+//           "description": "Enable pretty printing",
+//           "text": "-enable-pretty-printing",
+//           "ignoreFailures": true
+//         }
+//       ]
+//     }
+//   ]
+// }

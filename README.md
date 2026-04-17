@@ -1,3 +1,6 @@
+=========
+# Just the foundation. Big things coming soon.
+=========
 # ESP32 + ESP-IDF + Wokwi template
 
 This repository is a **starter template** for C firmware on the **ESP32** using **Espressif ESP-IDF**, with **Wokwi** simulation in the editor. Use it as a base and rename or copy the project when you start something new.

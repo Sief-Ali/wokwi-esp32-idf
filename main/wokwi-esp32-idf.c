@@ -5,20 +5,20 @@
 /*|Buy me a coffee at: paypal.me/chlebovec for more examples               |*/
 /*|------------------------------------------------------------------------|*/
 
-#include <string.h>
 #include "driver/gpio.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
+#include "esp_event.h"
+#include "esp_http_server.h"
+#include "esp_log.h"
+#include "esp_netif.h"
 #include "esp_system.h"
 #include "esp_wifi.h"
-#include "esp_event.h"
-#include "esp_log.h"
-#include "nvs_flash.h"
-#include "esp_netif.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/event_groups.h"
+#include "freertos/task.h"
 #include "lwip/err.h"
 #include "lwip/sys.h"
-#include "esp_http_server.h"
+#include "nvs_flash.h"
+#include <string.h>
 
 // Status LED
 #define LED_RED GPIO_NUM_2
@@ -36,7 +36,8 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
                                int32_t event_id, void *event_data) {
   if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
     esp_wifi_connect();
-  } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
+  } else if (event_base == WIFI_EVENT &&
+             event_id == WIFI_EVENT_STA_DISCONNECTED) {
     xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
     esp_wifi_connect();
   } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
@@ -44,14 +45,12 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
   }
 }
 
-void led_config()
-{
-    gpio_reset_pin(LED_RED);
-    gpio_set_direction(LED_RED, GPIO_MODE_OUTPUT);
+void led_config() {
+  gpio_reset_pin(LED_RED);
+  gpio_set_direction(LED_RED, GPIO_MODE_OUTPUT);
 }
 
-void led_task(void *pvParameter)
-{
+void led_task(void *pvParameter) {
   while (1) {
     if (xEventGroupGetBits(wifi_event_group) & CONNECTED_BIT) {
       // We are connected - LED on
@@ -67,33 +66,29 @@ void led_task(void *pvParameter)
   }
 }
 
-esp_err_t status_get_handler(httpd_req_t *req)
-{
-    const char* response = "{\"status\":\"ok\",\"device\":\"ESP32\"}";
+esp_err_t status_get_handler(httpd_req_t *req) {
+  const char *response = "{\"status\":\"ok\",\"device\":\"ESP32\"}";
 
-    httpd_resp_set_type(req, "application/json");
-    httpd_resp_send(req, response, HTTPD_RESP_USE_STRLEN);
+  httpd_resp_set_type(req, "application/json");
+  httpd_resp_send(req, response, HTTPD_RESP_USE_STRLEN);
 
-    return ESP_OK;
+  return ESP_OK;
 }
 
-httpd_uri_t status_uri = {
-  .uri      = "/status",
-  .method   = HTTP_GET,
-  .handler  = status_get_handler,
-  .user_ctx = NULL
-};
+httpd_uri_t status_uri = {.uri = "/status",
+                          .method = HTTP_GET,
+                          .handler = status_get_handler,
+                          .user_ctx = NULL};
 
-httpd_handle_t start_webserver(void)
-{
-    httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-    httpd_handle_t server = NULL;
+httpd_handle_t start_webserver(void) {
+  httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+  httpd_handle_t server = NULL;
 
-    if (httpd_start(&server, &config) == ESP_OK) {
-        httpd_register_uri_handler(server, &status_uri);
-    }
+  if (httpd_start(&server, &config) == ESP_OK) {
+    httpd_register_uri_handler(server, &status_uri);
+  }
 
-    return server;
+  return server;
 }
 
 // Main task
@@ -102,13 +97,15 @@ void main_task(void *pvParameter) {
 
   // wait for connection
   printf("Waiting for connection to the Wi-Fi network...\n");
-  xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
+  xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true,
+                      portMAX_DELAY);
   printf("Connected!\n");
   start_webserver();
   printf("Web server started. Try /status\n");
 
   // Get and print the local IP address
-  esp_netif_get_ip_info(esp_netif_get_handle_from_ifkey("WIFI_STA_DEF"), &ip_info);
+  esp_netif_get_ip_info(esp_netif_get_handle_from_ifkey("WIFI_STA_DEF"),
+                        &ip_info);
   printf("IP Address:  " IPSTR "\n", IP2STR(&ip_info.ip));
   printf("Subnet mask: " IPSTR "\n", IP2STR(&ip_info.netmask));
   printf("Gateway:     " IPSTR "\n", IP2STR(&ip_info.gw));
@@ -127,7 +124,8 @@ void app_main() {
 
   // Initialize NVS
   esp_err_t ret = nvs_flash_init();
-  if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+  if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
+      ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
     ESP_ERROR_CHECK(nvs_flash_erase());
     ret = nvs_flash_init();
   }
@@ -148,32 +146,28 @@ void app_main() {
   // The LED task is used to show the connection status
   xTaskCreate(&led_task, "led_task", 2048, NULL, 5, NULL);
 
-
   // Initialize the Wi-Fi driver
   wifi_init_config_t wifi_init_config = WIFI_INIT_CONFIG_DEFAULT();
   ESP_ERROR_CHECK(esp_wifi_init(&wifi_init_config));
 
   // Register event handlers
-  ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-                  ESP_EVENT_ANY_ID,
-                  &wifi_event_handler,
-                  NULL, NULL));
-  ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
-                  IP_EVENT_STA_GOT_IP,
-                  &wifi_event_handler,
-                  NULL, NULL));
+  ESP_ERROR_CHECK(esp_event_handler_instance_register(
+      WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, NULL));
+  ESP_ERROR_CHECK(esp_event_handler_instance_register(
+      IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL, NULL));
 
   // Configure Wi-Fi connection settings
   wifi_config_t wifi_config = {
-    .sta = {
-      .ssid = WIFI_SSID,
-      .password = WIFI_PASS,
-    },
+      .sta =
+          {
+              .ssid = WIFI_SSID,
+              .password = WIFI_PASS,
+          },
   };
 
   // Set Wi-Fi mode to STA (Station)
   ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-  ESP_ERROR_CHECK(esp_wifi_set_config(  WIFI_IF_STA, &wifi_config));
+  ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
 
   // Start Wi-Fi
   ESP_ERROR_CHECK(esp_wifi_start());
@@ -181,6 +175,4 @@ void app_main() {
   // Start the main task
   xTaskCreate(&main_task, "main_task", 2048, NULL, 5, NULL);
   printf("Connecting to %s\n", WIFI_SSID);
-
-
 }

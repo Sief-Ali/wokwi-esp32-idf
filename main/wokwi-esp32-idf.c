@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/timers.h"
 
-// #include "esp_task_wdt.h"
-// or esp_task_wdt_delete(NULL); to delete the watchdog task
-// or #include "esp_rom_sys.h"
-
+#define DELAY_TIME 1000
 #define LED_PIN 5
 #define SWITCH_PIN 2
 #define GPIO_BASE 0x3FF44000
@@ -12,15 +12,6 @@
 #define GPIO_OUT_REG (*(volatile uint32_t *)(GPIO_BASE + 0x04))
 #define GPIO_ENABLE_REG (*(volatile uint32_t *)(GPIO_BASE + 0x20))
 #define GPIO_IN_REG (*(volatile uint32_t *)(GPIO_BASE + 0x3C))
-
-static void finite_delay(volatile uint32_t count)
-{
-    while (count--) {
-      __asm__ volatile("nop");
-      // or use esp_task_wdt_reset();  // to feed watchdog manually
-      // esp_rom_delay_us(100);
-    }
-}
 
 void app_main(void)
 {
@@ -37,6 +28,6 @@ void app_main(void)
         } else {
             GPIO_OUT_REG &= ~(1 << LED_PIN);
         }
-        finite_delay(1500000); // Custom finite-loop delay
+        vTaskDelay(pdMS_TO_TICKS(DELAY_TIME));
     }
 }

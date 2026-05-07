@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 // FreeRTOS
-// NOLINTNEXTLINE
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 

@@ -1,7 +1,8 @@
 #include "led_driver.h"
 #include "gpio_driver.h"
 
-static led_pin_t s_led_pin = 0U;
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+static led_pin_t s_led_pin;
 
 void led_driver_init(led_pin_t pin)
 {
@@ -9,7 +10,7 @@ void led_driver_init(led_pin_t pin)
     gpio_driver_set_output(s_led_pin);
 }
 
-void led_driver_set(led_state_t on)
+void led_driver_set(led_state_t state)
 {
-    gpio_driver_write(s_led_pin, on);
+    gpio_driver_write(s_led_pin, state);
 }

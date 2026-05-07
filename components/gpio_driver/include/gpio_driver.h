@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef volatile uint8_t gpio_pin_t;
+typedef uint8_t gpio_pin_t;
 typedef volatile bool gpio_level_t;
 
 #define GPIO_LEVEL_LOW false
